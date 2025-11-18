@@ -1,0 +1,14 @@
+/Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/deps/serde-54313ceeaa10ea76.d: /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/build/serde-116e4b400d6c5380/out/private.rs
+
+/Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/deps/libserde-54313ceeaa10ea76.rlib: /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/build/serde-116e4b400d6c5380/out/private.rs
+
+/Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/deps/libserde-54313ceeaa10ea76.rmeta: /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/build/serde-116e4b400d6c5380/out/private.rs
+
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/build/serde-116e4b400d6c5380/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/pronabpal/QuickLab/RUST_RENDER/intentglyph_sdl/target/debug/build/serde-116e4b400d6c5380/out

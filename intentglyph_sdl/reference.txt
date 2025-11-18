@@ -1,0 +1,3 @@
+https://chatgpt.com/g/g-p-676cfea79dc4819195c47317f6321013-gridlookoutasuniversal/c/68464bdb-93d8-8008-8222-80cbde67f18b
+
+adopt a library like Slint https://github.com/slint-ui/slint instead of building everything from scratch
