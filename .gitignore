@@ -1,0 +1,28 @@
+# Your project already has .gitignore configured!
+
+# Just verify before committing:
+git status
+
+# Should NOT see:
+✗ target/
+✗ *.apk  
+✗ android_build/
+
+# Should see:
+✓ src/*.rs
+✓ ui/*.slint
+✓ *.md
+
+# Then commit and push:
+git add .
+git commit -m "Initial commit"
+git push
+```
+
+### 💡 Golden Rules
+```
+# 1. NEVER commit /target/         ← #1 Rule!
+# 2. DO commit source files (.rs, .slint)
+# 3. DO commit Cargo.lock (for applications)
+# 4. DO commit build scripts (.sh)
+# 5. DO commit documentation (.md)

@@ -1,1 +1,0 @@
-cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/pronabpal/QuickLab/RUST_RENDER/Touchstream_and/tapstream/target/release/build/mime_guess-5fc89e52503e0739/out/mime_types_generated.rs
