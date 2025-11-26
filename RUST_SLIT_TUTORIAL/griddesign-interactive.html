@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GridDesign - Universal Cross-Platform Layout System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #06b6d4;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 400px;
+            height: calc(100vh - 80px);
+            gap: 0;
+        }
+
+        .panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .panel h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .device-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .device-btn {
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .device-btn:hover {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .device-btn.active {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .device-icon {
+            font-size: 1.3rem;
+        }
+
+        .grid-controls {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+
+        .control-group input,
+        .control-group select {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .canvas-container {
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .device-frame {
+            background: #2d3748;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .device-frame.phone {
+            width: 375px;
+            height: 667px;
+            border-radius: 40px;
+        }
+
+        .device-frame.tablet {
+            width: 768px;
+            height: 1024px;
+            border-radius: 20px;
+        }
+
+        .device-frame.desktop {
+            width: 1200px;
+            height: 800px;
+            border-radius: 12px;
+        }
+
+        .device-frame.watch {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+
+        .viewport {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .grid-cell {
+            position: absolute;
+            border: 1px dashed var(--border);
+            transition: all 0.3s;
+        }
+
+        .component {
+            position: absolute;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .component:hover {
+            border-color: var(--primary);
+            transform: scale(1.02);
+            z-index: 10;
+        }
+
+        .component.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            z-index: 11;
+        }
+
+        .json-editor {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+            white-space: pre;
+            line-height: 1.6;
+        }
+
+        .component-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .component-item {
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .component-item:hover {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .component-item.selected {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .component-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        .icon-btn:hover {
+            color: var(--accent);
+        }
+
+        .add-component-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .add-component-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .export-btn {
+            padding: 0.6rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn:hover {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(6, 182, 212, 0.2));
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-banner h3 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .info-banner p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>📐</span>
+            GridDesign Studio
+        </h1>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="loadExample()">Load Example</button>
+            <button class="btn btn-secondary" onclick="clearLayout()">Clear</button>
+            <button class="btn btn-primary" onclick="exportJSON()">Export JSON</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Panel: Device & Grid Controls -->
+        <div class="panel">
+            <div class="info-banner">
+                <h3>🌍 Universal Positioning</h3>
+                <p>Design once, deploy everywhere. One JSON schema for all platforms.</p>
+            </div>
+
+            <h2>📱 Device Preview</h2>
+            <div class="device-selector">
+                <button class="device-btn" onclick="setDevice('phone')" id="btn-phone">
+                    <span class="device-icon">📱</span>
+                    <span>Mobile Phone</span>
+                </button>
+                <button class="device-btn" onclick="setDevice('tablet')" id="btn-tablet">
+                    <span class="device-icon">📱</span>
+                    <span>Tablet</span>
+                </button>
+                <button class="device-btn active" onclick="setDevice('desktop')" id="btn-desktop">
+                    <span class="device-icon">💻</span>
+                    <span>Desktop</span>
+                </button>
+                <button class="device-btn" onclick="setDevice('watch')" id="btn-watch">
+                    <span class="device-icon">⌚</span>
+                    <span>Smart Watch</span>
+                </button>
+            </div>
+
+            <h2>⚙️ Grid Configuration</h2>
+            <div class="grid-controls">
+                <div class="control-group">
+                    <label>Columns</label>
+                    <input type="number" id="gridColumns" value="4" min="1" max="12" onchange="updateGrid()">
+                </div>
+                <div class="control-group">
+                    <label>Rows</label>
+                    <input type="number" id="gridRows" value="4" min="1" max="12" onchange="updateGrid()">
+                </div>
+                <div class="control-group">
+                    <label>Horizontal Gutter (px)</label>
+                    <input type="number" id="gutterH" value="10" min="0" max="50" onchange="updateGrid()">
+                </div>
+                <div class="control-group">
+                    <label>Vertical Gutter (px)</label>
+                    <input type="number" id="gutterV" value="10" min="0" max="50" onchange="updateGrid()">
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="statComponents">0</div>
+                    <div class="stat-label">Components</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statCells">16</div>
+                    <div class="stat-label">Grid Cells</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Canvas -->
+        <div class="canvas-container">
+            <div class="device-frame desktop" id="deviceFrame">
+                <div class="viewport" id="viewport">
+                    <div class="grid-overlay" id="gridOverlay"></div>
+                    <!-- Components will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Components & JSON -->
+        <div class="panel">
+            <h2>🧩 Components</h2>
+            <div class="component-list" id="componentList">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">No components yet. Click "Add Component" to start.</p>
+            </div>
+            <button class="add-component-btn" onclick="addComponent()">+ Add Component</button>
+
+            <h2 style="margin-top: 2rem;">📋 JSON Schema</h2>
+            <div class="json-editor" id="jsonEditor">{
+  "id": "GridDesignLayout",
+  "viewport": { "width": 1200, "height": 800 },
+  "grid": { "columns": 4, "rows": 4 },
+  "components": []
+}</div>
+
+            <h2 style="margin-top: 2rem;">🚀 Export</h2>
+            <div class="export-options">
+                <button class="export-btn" onclick="exportForPlatform('web')">
+                    <span>🌐</span>
+                    <span>Web (HTML/CSS)</span>
+                </button>
+                <button class="export-btn" onclick="exportForPlatform('android')">
+                    <span>🤖</span>
+                    <span>Android (Compose)</span>
+                </button>
+                <button class="export-btn" onclick="exportForPlatform('ios')">
+                    <span>🍎</span>
+                    <span>iOS (SwiftUI)</span>
+                </button>
+                <button class="export-btn" onclick="exportForPlatform('flutter')">
+                    <span>🎯</span>
+                    <span>Flutter</span>
+                </button>
+                <button class="export-btn" onclick="exportForPlatform('slint')">
+                    <span>🦀</span>
+                    <span>Slint (Rust)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GridDesign State
+        let state = {
+            device: 'desktop',
+            grid: {
+                columns: 4,
+                rows: 4,
+                gutterH: 10,
+                gutterV: 10
+            },
+            viewport: {
+                width: 1200,
+                height: 800
+            },
+            components: [],
+            selectedComponent: null
+        };
+
+        const deviceConfig = {
+            phone: { width: 375, height: 667, columns: 2, rows: 6 },
+            tablet: { width: 768, height: 1024, columns: 3, rows: 4 },
+            desktop: { width: 1200, height: 800, columns: 4, rows: 4 },
+            watch: { width: 200, height: 200, columns: 2, rows: 2 }
+        };
+
+        // Initialize
+        function init() {
+            setDevice('desktop');
+            updateGrid();
+            render();
+        }
+
+        function setDevice(device) {
+            state.device = device;
+            state.viewport = {
+                width: deviceConfig[device].width,
+                height: deviceConfig[device].height
+            };
+            state.grid.columns = deviceConfig[device].columns;
+            state.grid.rows = deviceConfig[device].rows;
+
+            // Update UI
+            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${device}`).classList.add('active');
+
+            document.getElementById('gridColumns').value = state.grid.columns;
+            document.getElementById('gridRows').value = state.grid.rows;
+
+            const frame = document.getElementById('deviceFrame');
+            frame.className = `device-frame ${device}`;
+
+            updateGrid();
+            render();
+        }
+
+        function updateGrid() {
+            state.grid.columns = parseInt(document.getElementById('gridColumns').value);
+            state.grid.rows = parseInt(document.getElementById('gridRows').value);
+            state.grid.gutterH = parseInt(document.getElementById('gutterH').value);
+            state.grid.gutterV = parseInt(document.getElementById('gutterV').value);
+
+            document.getElementById('statCells').textContent = state.grid.columns * state.grid.rows;
+
+            renderGrid();
+            render();
+        }
+
+        function renderGrid() {
+            const overlay = document.getElementById('gridOverlay');
+            overlay.innerHTML = '';
+
+            const viewport = document.getElementById('viewport');
+            const cellWidth = viewport.offsetWidth / state.grid.columns;
+            const cellHeight = viewport.offsetHeight / state.grid.rows;
+
+            for (let row = 0; row < state.grid.rows; row++) {
+                for (let col = 0; col < state.grid.columns; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.style.left = `${col * cellWidth}px`;
+                    cell.style.top = `${row * cellHeight}px`;
+                    cell.style.width = `${cellWidth}px`;
+                    cell.style.height = `${cellHeight}px`;
+                    overlay.appendChild(cell);
+                }
+            }
+        }
+
+        function addComponent() {
+            const id = `component-${Date.now()}`;
+            const component = {
+                id: id,
+                positioning: {
+                    start_cell: { column: 1, row: 1 },
+                    span_cells: { columns: 1, rows: 1 },
+                    layer: 10
+                },
+                content: {
+                    type: 'text',
+                    text: `Component ${state.components.length + 1}`
+                },
+                styling: {
+                    background_color: getRandomColor(),
+                    text_color: 'white',
+                    font_size: 16,
+                    border_radius: 8
+                }
+            };
+
+            state.components.push(component);
+            state.selectedComponent = id;
+            render();
+        }
+
+        function getRandomColor() {
+            const colors = ['#667eea', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function deleteComponent(id) {
+            state.components = state.components.filter(c => c.id !== id);
+            if (state.selectedComponent === id) {
+                state.selectedComponent = null;
+            }
+            render();
+        }
+
+        function selectComponent(id) {
+            state.selectedComponent = id;
+            render();
+        }
+
+        function render() {
+            renderComponents();
+            renderComponentList();
+            renderJSON();
+            updateStats();
+        }
+
+        function renderComponents() {
+            const viewport = document.getElementById('viewport');
+            const existingComponents = viewport.querySelectorAll('.component');
+            existingComponents.forEach(c => c.remove());
+
+            const cellWidth = viewport.offsetWidth / state.grid.columns;
+            const cellHeight = viewport.offsetHeight / state.grid.rows;
+
+            state.components.forEach(component => {
+                const div = document.createElement('div');
+                div.className = 'component';
+                if (component.id === state.selectedComponent) {
+                    div.classList.add('selected');
+                }
+
+                const pos = component.positioning;
+                const x = (pos.start_cell.column - 1) * cellWidth + state.grid.gutterH / 2;
+                const y = (pos.start_cell.row - 1) * cellHeight + state.grid.gutterV / 2;
+                const width = pos.span_cells.columns * cellWidth - state.grid.gutterH;
+                const height = pos.span_cells.rows * cellHeight - state.grid.gutterV;
+
+                div.style.left = `${x}px`;
+                div.style.top = `${y}px`;
+                div.style.width = `${width}px`;
+                div.style.height = `${height}px`;
+                div.style.background = component.styling.background_color;
+                div.style.color = component.styling.text_color;
+                div.style.fontSize = `${component.styling.font_size}px`;
+                div.style.borderRadius = `${component.styling.border_radius}px`;
+                div.style.zIndex = pos.layer;
+
+                div.textContent = component.content.text || 'Component';
+                div.onclick = () => selectComponent(component.id);
+
+                viewport.appendChild(div);
+            });
+        }
+
+        function renderComponentList() {
+            const list = document.getElementById('componentList');
+            list.innerHTML = '';
+
+            if (state.components.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No components yet. Click "Add Component" to start.</p>';
+                return;
+            }
+
+            state.components.forEach(component => {
+                const item = document.createElement('div');
+                item.className = 'component-item';
+                if (component.id === state.selectedComponent) {
+                    item.classList.add('selected');
+                }
+
+                const pos = component.positioning;
+                item.innerHTML = `
+                    <span>${component.content.text}</span>
+                    <div class="component-actions">
+                        <button class="icon-btn" onclick="deleteComponent('${component.id}')" title="Delete">🗑️</button>
+                    </div>
+                `;
+
+                item.onclick = (e) => {
+                    if (!e.target.closest('.icon-btn')) {
+                        selectComponent(component.id);
+                    }
+                };
+
+                list.appendChild(item);
+            });
+        }
+
+        function renderJSON() {
+            const schema = {
+                id: 'GridDesignLayout',
+                viewport: state.viewport,
+                grid: state.grid,
+                components: state.components
+            };
+
+            document.getElementById('jsonEditor').textContent = JSON.stringify(schema, null, 2);
+        }
+
+        function updateStats() {
+            document.getElementById('statComponents').textContent = state.components.length;
+        }
+
+        function exportJSON() {
+            const schema = {
+                id: 'GridDesignLayout',
+                viewport: state.viewport,
+                grid: state.grid,
+                components: state.components
+            };
+
+            const blob = new Blob([JSON.stringify(schema, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'griddesign-layout.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportForPlatform(platform) {
+            alert(`Exporting for ${platform}...\n\nThis would generate platform-specific code:\n- Web: HTML/CSS\n- Android: Jetpack Compose\n- iOS: SwiftUI\n- Flutter: Widget tree\n- Slint: .slint file`);
+        }
+
+        function loadExample() {
+            state.components = [
+                {
+                    id: 'header',
+                    positioning: {
+                        start_cell: { column: 1, row: 1 },
+                        span_cells: { columns: 4, rows: 1 },
+                        layer: 10
+                    },
+                    content: { type: 'text', text: 'Dashboard Header' },
+                    styling: {
+                        background_color: '#667eea',
+                        text_color: 'white',
+                        font_size: 20,
+                        border_radius: 12
+                    }
+                },
+                {
+                    id: 'sidebar',
+                    positioning: {
+                        start_cell: { column: 1, row: 2 },
+                        span_cells: { columns: 1, rows: 3 },
+                        layer: 10
+                    },
+                    content: { type: 'text', text: 'Navigation' },
+                    styling: {
+                        background_color: '#06b6d4',
+                        text_color: 'white',
+                        font_size: 16,
+                        border_radius: 12
+                    }
+                },
+                {
+                    id: 'content',
+                    positioning: {
+                        start_cell: { column: 2, row: 2 },
+                        span_cells: { columns: 3, rows: 3 },
+                        layer: 10
+                    },
+                    content: { type: 'text', text: 'Main Content' },
+                    styling: {
+                        background_color: '#10b981',
+                        text_color: 'white',
+                        font_size: 18,
+                        border_radius: 12
+                    }
+                }
+            ];
+            render();
+        }
+
+        function clearLayout() {
+            if (confirm('Clear all components?')) {
+                state.components = [];
+                state.selectedComponent = null;
+                render();
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

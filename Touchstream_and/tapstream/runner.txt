@@ -1,0 +1,15 @@
+📶 WiFi Hotspot Configuration
+============================
+SSID:     TapStream_session_1763972403
+Password: tapstream123
+Server:   http://192.168.43.1:8080
+
+QR Code: WIFI:T:WPA;S:TapStream_session_1763972403;P:tapstream123;;
+
+📱 On Android, this would:
+   1. Enable WiFi hotspot
+   2. Configure network
+   3. Start HTTP server
+
+📱 Selected role: cook
+pronabpal@Pronabs-devbook tapstream % 

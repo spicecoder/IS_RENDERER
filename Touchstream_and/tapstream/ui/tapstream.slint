@@ -1,0 +1,546 @@
+// ============================================================================
+// TAPSTREAM SLINT UI
+// Grid-based layouts following Intention Space physics
+// ONE CELL = ONE PULSE
+// ============================================================================
+
+import { Button, VerticalBox, HorizontalBox, GridBox, ScrollView } from "std-widgets.slint";
+import { TextEdit } from "std-widgets.slint";
+// ============================================================================
+// DATA STRUCTURES
+// ============================================================================
+
+export struct GridCellData {
+    pulse_id: string,
+    pulse_name: string,
+    pulse_value: string,
+    pulse_tv: string,  // "Y", "N", "U"
+    layer: int,
+    row: int,
+    col: int,
+}
+
+export struct StreamMetadata {
+    dish_name: string,
+    cooking_stage: string,
+    temperature: string,
+    timer: string,
+}
+
+// ============================================================================
+// GRID CELL COMPONENT - ONE CELL = ONE PULSE
+// ============================================================================
+
+component GridCell inherits Rectangle {
+    in property <GridCellData> data;
+    callback cell_tapped(string /* pulse_id */);
+    callback cell_long_pressed(string /* pulse_id */);
+    
+    // Visual state based on pulse TV
+    background: data.pulse_tv == "Y" ? #e8f5e9 : 
+                data.pulse_tv == "N" ? #ffebee : #f5f5f5;
+    
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: data.pulse_tv == "Y" ? #4caf50 : 
+                  data.pulse_tv == "N" ? #f44336 : #bdbdbd;
+    
+    VerticalBox {
+        padding: 8px;
+        
+        Text {
+            text: data.pulse_name;
+            font-size: 12px;
+            font-weight: 600;
+            color: #424242;
+        }
+        
+        Text {
+            text: data.pulse_value;
+            font-size: 14px;
+            color: #212121;
+            wrap: word-wrap;
+        }
+    }
+    
+    TouchArea {
+        clicked => {
+            root.cell_tapped(data.pulse_id);
+        }
+        
+        // Long press for additional interactions
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down) {
+                // Could implement long press timer
+            }
+        }
+    }
+}
+
+// ============================================================================
+// COOK PREVIEW SCREEN (3x3 Grid)
+// ============================================================================
+
+export component CookPreview inherits Window {
+    title: "TapStream - Cook";
+    preferred-width: 360px;
+    preferred-height: 640px;
+    
+    in property <string> cook_id;
+    in property <int> frame_count: 0;
+    in property <bool> is_streaming: false;
+    in-out property <StreamMetadata> metadata;
+    
+    // Local properties for two-way binding with TextInputs
+    in-out property <string> dish_name: metadata.dish_name;
+    in-out property <string> cooking_stage: metadata.cooking_stage;
+    
+    // Grid cells (3x3 = 9 cells, 9 pulses)
+    in property <[GridCellData]> grid_cells;
+    
+    callback start_stream();
+    callback stop_stream();
+    callback update_metadata(StreamMetadata);
+    callback update_dish_name(string);
+    callback update_cooking_stage(string);
+    callback cell_interaction(string /* pulse_id */);
+    
+    VerticalBox {
+        padding: 16px;
+        spacing: 16px;
+        
+        // Header
+        HorizontalBox {
+            alignment: space-between;
+            
+            Text {
+                text: "🍳 Cook View";
+                font-size: 20px;
+                font-weight: 700;
+            }
+            
+            Text {
+                text: is_streaming ? "🔴 LIVE" : "⚫ Ready";
+                font-size: 14px;
+                color: is_streaming ? #f44336 : #757575;
+            }
+        }
+        
+        // Cook ID & Frame counter
+        HorizontalBox {
+            Text {
+                text: "Cook: " + cook_id;
+                font-size: 12px;
+                color: #616161;
+            }
+            
+            Text {
+                text: "Frames: " + frame_count;
+                font-size: 12px;
+                color: #616161;
+            }
+        }
+        
+        // 3x3 Preview Grid (ONE CELL = ONE PULSE)
+        GridBox {
+            spacing: 8px;
+            Row {
+                GridCell {
+                    data: grid_cells[0];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+                GridCell {
+                    data: grid_cells[1];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+                GridCell {
+                    data: grid_cells[2];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+            }
+            Row {
+                GridCell {
+                    data: grid_cells[3];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+                GridCell {
+                    data: grid_cells[4];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+                GridCell {
+                    data: grid_cells[5];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+            }
+            Row {
+                GridCell {
+                    data: grid_cells[6];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+                GridCell {
+                    data: grid_cells[7];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+                GridCell {
+                    data: grid_cells[8];
+                    cell_tapped(id) => { cell_interaction(id); }
+                }
+            }
+        }
+        
+        // Metadata controls
+        VerticalBox {
+            spacing: 8px;
+            
+            HorizontalBox {
+                Text { text: "Dish:"; }
+                TextEdit {
+                    text <=> root.dish_name;
+                    edited => {
+                        root.update_dish_name(root.dish_name);
+                    }
+                }
+            }
+            
+            HorizontalBox {
+                Text { text: "Stage:"; }
+                TextEdit {
+                    text <=> root.cooking_stage;
+                    edited => {
+                        root.update_cooking_stage(root.cooking_stage);
+                    }
+                }
+            }
+        }
+        
+        // Stream controls
+        HorizontalBox {
+            spacing: 8px;
+            
+            Button {
+                text: is_streaming ? "⏹ Stop" : "▶ Start Stream";
+                enabled: true;
+                clicked => {
+                    if (is_streaming) {
+                        stop_stream();
+                    } else {
+                        start_stream();
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// DINER STREAM SCREEN (4x4 Grid)
+// ============================================================================
+
+export component DinerStream inherits Window {
+    title: "TapStream - Diner";
+    preferred-width: 360px;
+    preferred-height: 640px;
+    
+    in property <string> diner_id;
+    in-out property <string> cook_id;
+    in property <bool> is_connected: false;
+    
+    // Grid cells (4x4 = 16 cells, 16 pulses)
+    in property <[GridCellData]> grid_cells;
+    
+    callback connect_to_stream(string /* cook_id */);
+    callback disconnect_stream();
+    callback cell_interaction(string /* pulse_id */);
+    
+    VerticalBox {
+        padding: 16px;
+        spacing: 12px;
+        
+        // Header
+        HorizontalBox {
+            alignment: space-between;
+            
+            Text {
+                text: "🍽️ Diner View";
+                font-size: 20px;
+                font-weight: 700;
+            }
+            
+            Text {
+                text: is_connected ? "🟢 Connected" : "⚫ Offline";
+                font-size: 14px;
+                color: is_connected ? #4caf50 : #757575;
+            }
+        }
+        
+        // Stream info
+        if is_connected: HorizontalBox {
+            Text {
+                text: "Watching: " + cook_id;
+                font-size: 12px;
+                color: #616161;
+            }
+        }
+        
+        // 4x4 Stream Grid (ONE CELL = ONE PULSE)
+        ScrollView {
+            GridBox {
+                spacing: 6px;
+                
+                // Row 0: Main video display
+                Row {
+                    GridCell {
+                        data: grid_cells[0];
+                        colspan: 4;
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                }
+                
+                // Row 1: Metadata
+                Row {
+                    GridCell {
+                        data: grid_cells[4];
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[5];
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[6];
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[7];
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                }
+                
+                // Row 2: Interactive controls
+                Row {
+                    GridCell {
+                        data: grid_cells[8];  // Like button
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[9];  // Comment button
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[10]; // Share button
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[11]; // Bookmark button
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                }
+                
+                // Row 3: Status info
+                Row {
+                    GridCell {
+                        data: grid_cells[12]; // Viewers
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[13]; // Connection status
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[14]; // Quality
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                    GridCell {
+                        data: grid_cells[15]; // Latency
+                        cell_tapped(id) => { cell_interaction(id); }
+                    }
+                }
+            }
+        }
+        
+        // Connection controls
+        if !is_connected: HorizontalBox {
+            TextEdit {
+                placeholder-text: "Enter cook ID";
+                text <=> root.cook_id;
+            }
+            
+            Button {
+                text: "Connect";
+                clicked => {
+                    connect_to_stream(cook_id);
+                }
+            }
+        }
+        
+        if is_connected: Button {
+            text: "Disconnect";
+            clicked => {
+                disconnect_stream();
+            }
+        }
+    }
+}
+
+// ============================================================================
+// WIFI SETUP SCREEN
+// ============================================================================
+
+export component WiFiSetup inherits Window {
+    title: "TapStream - Setup";
+    preferred-width: 360px;
+    preferred-height: 640px;
+    
+    in property <string> ssid;
+    in property <string> password;
+    in property <string> qr_code;
+    in property <string> server_url;
+    
+    callback start_hotspot();
+    callback copy_credentials();
+    
+    VerticalBox {
+        padding: 24px;
+        spacing: 20px;
+        
+        Text {
+            text: "📡 TapStream WiFi";
+            font-size: 24px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+        
+        Rectangle {
+            background: white;
+            border-radius: 12px;
+            border-width: 2px;
+            border-color: #e0e0e0;
+            
+            VerticalBox {
+                padding: 16px;
+                spacing: 12px;
+                
+                Text {
+                    text: "Network Credentials";
+                    font-size: 16px;
+                    font-weight: 600;
+                }
+                
+                HorizontalBox {
+                    Text { text: "SSID:"; font-weight: 600; }
+                    Text { text: ssid; }
+                }
+                
+                HorizontalBox {
+                    Text { text: "Password:"; font-weight: 600; }
+                    Text { text: password; }
+                }
+                
+                HorizontalBox {
+                    Text { text: "Server:"; font-weight: 600; }
+                    Text { text: server_url; }
+                }
+            }
+        }
+        
+        // QR Code placeholder
+        Rectangle {
+            height: 200px;
+            background: white;
+            border-radius: 12px;
+            
+            Text {
+                text: "📷 QR Code\n" + qr_code;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                font-size: 12px;
+            }
+        }
+        
+        Text {
+            text: "Scan this QR code to connect\nor use the credentials above";
+            horizontal-alignment: center;
+            font-size: 12px;
+            color: #757575;
+        }
+        
+        Button {
+            text: "🔥 Start Hotspot";
+            clicked => {
+                start_hotspot();
+            }
+        }
+        
+        Button {
+            text: "📋 Copy Credentials";
+            clicked => {
+                copy_credentials();
+            }
+        }
+    }
+}
+
+// ============================================================================
+// MAIN APP SELECTOR
+// ============================================================================
+
+export component TapStreamApp inherits Window {
+    title: "TapStream";
+    preferred-width: 360px;
+    preferred-height: 640px;
+    
+    in property <string> current_screen: "selector"; // "selector", "cook", "diner", "setup"
+    
+    callback select_role(string /* role */);
+    
+    if current_screen == "selector": VerticalBox {
+        padding: 32px;
+        spacing: 24px;
+        
+        Text {
+            text: "🎥 TapStream";
+            font-size: 32px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+        
+        Text {
+            text: "Live cooking streams\nover local WiFi";
+            font-size: 14px;
+            horizontal-alignment: center;
+            color: #757575;
+        }
+        
+        Rectangle { height: 40px; }
+        
+        Button {
+            text: "🍳 I'm the Cook (Stream)";
+            clicked => {
+                select_role("cook");
+            }
+        }
+        
+        Button {
+            text: "🍽️ I'm a Diner (Watch)";
+            clicked => {
+                select_role("diner");
+            }
+        }
+        
+        Button {
+            text: "📡 WiFi Setup";
+            clicked => {
+                select_role("setup");
+            }
+        }
+        
+        Rectangle { height: 40px; }
+        
+        Text {
+            text: "Powered by Intention Space\nRust + Slint + IPTP";
+            font-size: 10px;
+            horizontal-alignment: center;
+            color: #bdbdbd;
+        }
+    }
+}
