@@ -1,3 +1,0 @@
-cargo:rustc-check-cfg=cfg(slint_debug_property)
-cargo:rerun-if-changed=widgets
-cargo:rustc-env=SLINT_WIDGETS_LIBRARY=/Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/build/i-slint-compiler-d442fca802eeaa5f/out/included_library.rs
