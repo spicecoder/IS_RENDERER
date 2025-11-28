@@ -1,0 +1,19 @@
+[package]
+name = "seven_days"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+slint = "1.3"
+chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+uuid = { version = "1.6", features = ["v4", "serde"] }
+dirs = "5.0"
+
+[build-dependencies]
+slint-build = "1.3"
+
+[[bin]]
+name = "seven_days"
+path = "src/main.rs"

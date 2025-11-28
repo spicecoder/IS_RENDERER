@@ -1,0 +1,21 @@
+{"dc":"dc_assignment","intention":"I:PutValue","pulses":{"location":"x","value":"42"},"ts":"2025-11-27T08:02:21.889192+00:00"}
+{"dc":"dc_assignment","intention":"I:ValuePlaced","pulses":{"location":"x","value":"42"},"ts":"2025-11-27T08:02:21.889514+00:00"}
+{"dc":"dc_assignment","intention":"I:MoveValue","pulses":{"from":"(expr)","to":"y","value":"[1, 2, 3]"},"ts":"2025-11-27T08:02:21.889836+00:00"}
+{"dc":"dc_assignment","intention":"I:ValuePlaced","pulses":{"location":"y","value":"[1, 2, 3]"},"ts":"2025-11-27T08:02:21.889939+00:00"}
+{"dc":"dc_assignment","intention":"I:PutValue","pulses":{"location":"a","value":"100"},"ts":"2025-11-27T08:02:21.890123+00:00"}
+{"dc":"dc_assignment","intention":"I:ValuePlaced","pulses":{"location":"a","value":"100"},"ts":"2025-11-27T08:02:21.890232+00:00"}
+{"dc":"dc_assignment","intention":"I:BorrowValue","pulses":{"borrow_kind":"shared","location":"a"},"ts":"2025-11-27T08:02:21.890413+00:00"}
+{"dc":"dc_assignment","intention":"I:BorrowIssued","pulses":{"loan_token":"loan_r","location":"a"},"ts":"2025-11-27T08:02:21.890594+00:00"}
+{"dc":"dc_assignment","intention":"I:PutValue","pulses":{"location":"m","value":"10"},"ts":"2025-11-27T08:02:21.890724+00:00"}
+{"dc":"dc_assignment","intention":"I:ValuePlaced","pulses":{"location":"m","value":"10"},"ts":"2025-11-27T08:02:21.890890+00:00"}
+{"dc":"dc_assignment","intention":"I:BorrowMutValue","pulses":{"borrow_kind":"exclusive","location":"m"},"ts":"2025-11-27T08:02:21.891057+00:00"}
+{"dc":"dc_assignment","intention":"I:BorrowIssued","pulses":{"loan_token":"loan_rm","location":"m","mut":true},"ts":"2025-11-27T08:02:21.891183+00:00"}
+{"dc":"dc_assignment","intention":"I:PutValue","pulses":{"location":"rc1","value":"[9, 8, 7]"},"ts":"2025-11-27T08:02:21.891318+00:00"}
+{"dc":"dc_assignment","intention":"I:ValuePlaced","pulses":{"location":"rc1","value":"[9, 8, 7]"},"ts":"2025-11-27T08:02:21.891408+00:00"}
+{"dc":"dc_assignment","intention":"I:RefcountChanged","pulses":{"inner":"[9, 8, 7]","src":"rc1","target":"rc2"},"ts":"2025-11-27T08:02:21.891563+00:00"}
+{"dc":"dc_assignment","intention":"I:PutValue","pulses":{"location":"z","value":"\"to be dropped\""},"ts":"2025-11-27T08:02:21.891698+00:00"}
+{"dc":"dc_assignment","intention":"I:ValuePlaced","pulses":{"location":"z","value":"\"to be dropped\""},"ts":"2025-11-27T08:02:21.891784+00:00"}
+{"dc":"dc_assignment","intention":"I:DropScheduled","pulses":{"from":"z"},"ts":"2025-11-27T08:02:21.891935+00:00"}
+{"dc":"dc_assignment","intention":"I:ValueDropped","pulses":{"from":"z"},"ts":"2025-11-27T08:02:21.892016+00:00"}
+{"dc":"dc_assignment","intention":"I:PutValue","pulses":{"location":"direct_loc","value":{"hello":"world"}},"ts":"2025-11-27T08:02:21.892112+00:00"}
+{"dc":"dc_assignment","intention":"I:ValuePlaced","pulses":{"location":"direct_loc"},"ts":"2025-11-27T08:02:21.892209+00:00"}

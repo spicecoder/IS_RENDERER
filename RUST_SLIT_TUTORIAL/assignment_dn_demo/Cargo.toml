@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "dn_api",
+  "dn_impl",
+  "assignment_demo"
+]

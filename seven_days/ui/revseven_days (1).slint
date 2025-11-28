@@ -1,0 +1,466 @@
+// ============================================================================
+// 7 DAYS FROM TODAY - SLINT UI (CORRECTED)
+// Grid-based layout following Intention Space principles
+// ONE CELL = ONE PULSE
+// ============================================================================
+
+import { Button, VerticalBox, HorizontalBox, ScrollView, LineEdit, CheckBox } from "std-widgets.slint";
+
+// ============================================================================
+// DATA STRUCTURES
+// ============================================================================
+
+export struct TodoItemData {
+    id: string,
+    text: string,
+    completed: bool,
+}
+
+export struct DayData {
+    date: string,
+    weekday: string,
+    icon: string,
+    todos: [TodoItemData],
+    note_content: string,
+}
+
+// ============================================================================
+// MAIN WINDOW
+// ============================================================================
+
+export component MainWindow inherits Window {
+    title: "7 Days from Today";
+    preferred-width: 1200px;
+    preferred-height: 800px;
+    background: #F8F9FA;
+
+    // Callbacks
+    callback day_selected(int);
+    callback add_todo(int, string);
+    callback toggle_todo(int, string);
+    callback remove_todo(int, string);
+    callback update_note(int, string);
+    callback previous_weekday(int);
+    callback next_week();
+
+    // Properties
+    in-out property <[DayData]> days: [];
+    in-out property <int> selected_day: 0;
+    in-out property <bool> show_previous_mode: false;
+    in-out property <[DayData]> previous_days: [];
+
+    VerticalBox {
+        padding: 20px;
+        spacing: 20px;
+
+        // Header
+        HorizontalBox {
+            alignment: space-between;
+            
+            HorizontalBox {
+                spacing: 15px;
+                
+                Text {
+                    text: "🗓️ 7 Days from Today";
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: #2C3E50;
+                }
+                
+                Rectangle {
+                    width: 2px;
+                    background: #E0E0E0;
+                }
+                
+                Text {
+                    text: days[selected_day].weekday;
+                    font-size: 24px;
+                    color: #7F8C8D;
+                    vertical-alignment: center;
+                }
+            }
+            
+            HorizontalBox {
+                spacing: 10px;
+                
+                Button {
+                    text: "◀ Previous";
+                    enabled: !show_previous_mode;
+                    clicked => {
+                        previous_weekday(selected_day);
+                    }
+                }
+                
+                Button {
+                    text: "Next Week ▶";
+                    clicked => {
+                        next_week();
+                    }
+                }
+            }
+        }
+
+        // Days Grid
+        ScrollView {
+            viewport-height: 150px;
+            
+            HorizontalBox {
+                spacing: 10px;
+                padding: 10px;
+                
+                for day_data[index] in days: Rectangle {
+                    width: 150px;
+                    height: 130px;
+                    border-radius: 12px;
+                    background: index == selected_day ? #E3F2FD : #F5F5F5;
+                    border-width: index == selected_day ? 3px : 1px;
+                    border-color: index == selected_day ? #4A90E2 : #E0E0E0;
+                    
+                    TouchArea {
+                        clicked => {
+                            selected_day = index;
+                            day_selected(index);
+                        }
+                    }
+                    
+                    VerticalBox {
+                        padding: 15px;
+                        spacing: 10px;
+                        
+                        Text {
+                            text: day_data.icon;
+                            font-size: 36px;
+                            horizontal-alignment: center;
+                        }
+                        
+                        Text {
+                            text: day_data.weekday;
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2C3E50;
+                            horizontal-alignment: center;
+                        }
+                        
+                        Text {
+                            text: day_data.date;
+                            font-size: 12px;
+                            color: #7F8C8D;
+                            horizontal-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Detail View
+        if !show_previous_mode : Rectangle {
+            background: #FFFFFF;
+            border-radius: 15px;
+            
+            VerticalBox {
+                padding: 25px;
+                spacing: 20px;
+                
+                // Day header
+                HorizontalBox {
+                    spacing: 20px;
+                    
+                    Rectangle {
+                        width: 80px;
+                        height: 80px;
+                        border-radius: 40px;
+                        background: #667eea;
+                        
+                        Text {
+                            text: days[selected_day].icon;
+                            font-size: 48px;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                    
+                    VerticalBox {
+                        spacing: 5px;
+                        
+                        Text {
+                            text: days[selected_day].weekday;
+                            font-size: 32px;
+                            font-weight: 700;
+                            color: #2C3E50;
+                        }
+                        
+                        Text {
+                            text: days[selected_day].date;
+                            font-size: 18px;
+                            color: #7F8C8D;
+                        }
+                    }
+                }
+                
+                Rectangle {
+                    height: 2px;
+                    background: #E0E0E0;
+                }
+                
+                // Content area
+                HorizontalBox {
+                    spacing: 20px;
+                    
+                    // Todos section
+                    VerticalBox {
+                        width: 50%;
+                        spacing: 15px;
+                        
+                        HorizontalBox {
+                            alignment: space-between;
+                            
+                            Text {
+                                text: "✓ To-Do List";
+                                font-size: 20px;
+                                font-weight: 600;
+                                color: #2C3E50;
+                            }
+                            
+                            Text {
+                                text: "Tasks";
+                                font-size: 16px;
+                                color: #7F8C8D;
+                            }
+                        }
+                        
+                        // Add todo input
+                        HorizontalBox {
+                            spacing: 10px;
+                            
+                            new_todo_input := LineEdit {
+                                placeholder-text: "Add a new task...";
+                                
+                                accepted => {
+                                    if (self.text != "") {
+                                        add_todo(selected_day, self.text);
+                                        self.text = "";
+                                    }
+                                }
+                            }
+                            
+                            Button {
+                                text: "➕";
+                                width: 40px;
+                                
+                                clicked => {
+                                    if (new_todo_input.text != "") {
+                                        add_todo(selected_day, new_todo_input.text);
+                                        new_todo_input.text = "";
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Todos list
+                        ScrollView {
+                            height: 300px;
+                            
+                            VerticalBox {
+                                spacing: 10px;
+                                
+                                for todo[idx] in days[selected_day].todos: Rectangle {
+                                    height: 50px;
+                                    background: #FFFFFF;
+                                    border-radius: 8px;
+                                    border-width: 1px;
+                                    border-color: #E0E0E0;
+                                    
+                                    HorizontalBox {
+                                        padding: 12px;
+                                        spacing: 12px;
+                                        
+                                        CheckBox {
+                                            checked: todo.completed;
+                                            
+                                            toggled => {
+                                                toggle_todo(selected_day, todo.id);
+                                            }
+                                        }
+                                        
+                                        Text {
+                                            text: todo.text;
+                                            font-size: 15px;
+                                            color: todo.completed ? #95A5A6 : #2C3E50;
+                                            horizontal-alignment: left;
+                                            vertical-alignment: center;
+                                        }
+                                        
+                                        Rectangle {
+                                            width: 30px;
+                                            
+                                            TouchArea {
+                                                width: 30px;
+                                                height: 30px;
+                                                
+                                                clicked => {
+                                                    remove_todo(selected_day, todo.id);
+                                                }
+                                                
+                                                Rectangle {
+                                                    width: 30px;
+                                                    height: 30px;
+                                                    border-radius: 15px;
+                                                    background: parent.has-hover ? #FF4444 : transparent;
+                                                    
+                                                    Text {
+                                                        text: "🗑️";
+                                                        font-size: 16px;
+                                                        horizontal-alignment: center;
+                                                        vertical-alignment: center;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    Rectangle {
+                        width: 2px;
+                        background: #E0E0E0;
+                    }
+                    
+                    // Notes section
+                    VerticalBox {
+                        width: 50%;
+                        spacing: 15px;
+                        
+                        Text {
+                            text: "📝 Notes";
+                            font-size: 20px;
+                            font-weight: 600;
+                            color: #2C3E50;
+                        }
+                        
+                        Rectangle {
+                            background: #FFFFFF;
+                            border-radius: 8px;
+                            border-width: 2px;
+                            border-color: #E0E0E0;
+                            height: 300px;
+                            
+                            ScrollView {
+                                TextInput {
+                                    text: days[selected_day].note_content;
+                                    font-size: 16px;
+                                    wrap: word-wrap;
+                                    color: #2C3E50;
+                                    
+                                    edited => {
+                                        update_note(selected_day, self.text);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        HorizontalBox {
+                            alignment: end;
+                            
+                            Text {
+                                text: "Auto-saved";
+                                font-size: 12px;
+                                color: #95A5A6;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Previous weekday view
+        if show_previous_mode : Rectangle {
+            background: #FFFFFF;
+            border-radius: 15px;
+            
+            VerticalBox {
+                padding: 25px;
+                spacing: 20px;
+                
+                HorizontalBox {
+                    alignment: space-between;
+                    
+                    Text {
+                        text: "📅 Previous " + days[selected_day].weekday + "s";
+                        font-size: 24px;
+                        font-weight: 700;
+                        color: #2C3E50;
+                    }
+                    
+                    Button {
+                        text: "✕ Close";
+                        clicked => {
+                            show_previous_mode = false;
+                        }
+                    }
+                }
+                
+                ScrollView {
+                    HorizontalBox {
+                        spacing: 15px;
+                        
+                        for prev_day[index] in previous_days: Rectangle {
+                            width: 200px;
+                            height: 250px;
+                            border-radius: 12px;
+                            background: #F5F5F5;
+                            border-width: 1px;
+                            border-color: #E0E0E0;
+                            
+                            VerticalBox {
+                                padding: 20px;
+                                spacing: 12px;
+                                
+                                Text {
+                                    text: prev_day.icon;
+                                    font-size: 40px;
+                                    horizontal-alignment: center;
+                                }
+                                
+                                Text {
+                                    text: prev_day.weekday;
+                                    font-size: 18px;
+                                    font-weight: 600;
+                                    color: #2C3E50;
+                                    horizontal-alignment: center;
+                                }
+                                
+                                Text {
+                                    text: prev_day.date;
+                                    font-size: 14px;
+                                    color: #7F8C8D;
+                                    horizontal-alignment: center;
+                                }
+                                
+                                Rectangle {
+                                    height: 1px;
+                                    background: #E0E0E0;
+                                }
+                                
+                                Text {
+                                    text: prev_day.todos.length + " tasks";
+                                    font-size: 13px;
+                                    color: #7F8C8D;
+                                    horizontal-alignment: center;
+                                }
+                                
+                                Text {
+                                    text: prev_day.note_content != "" ? "📝 Has notes" : "No notes";
+                                    font-size: 12px;
+                                    color: #95A5A6;
+                                    horizontal-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

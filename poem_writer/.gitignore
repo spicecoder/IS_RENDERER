@@ -1,0 +1,39 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# Build artifacts
+/output/
+/android_build/
+*.apk
+*.so
+*.a
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Android
+.gradle/
+local.properties
+*.iml
+.DS_Store
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Cargo config (generated)
+/.cargo/config.toml
+
+# Slint generated
+ui_generated.rs
+
+# OS
+.DS_Store
+Thumbs.db

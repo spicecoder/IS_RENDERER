@@ -1,0 +1,14 @@
+/Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/deps/thiserror-947ea4c3d0abe590.d: /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/build/thiserror-c1adc5b3f85e4c25/out/private.rs
+
+/Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/deps/libthiserror-947ea4c3d0abe590.rlib: /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/build/thiserror-c1adc5b3f85e4c25/out/private.rs
+
+/Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/deps/libthiserror-947ea4c3d0abe590.rmeta: /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/build/thiserror-c1adc5b3f85e4c25/out/private.rs
+
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs:
+/Users/pronabpal/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs:
+/Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/build/thiserror-c1adc5b3f85e4c25/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/pronabpal/QuickLab/RUST_RENDER/seven_days/target/release/build/thiserror-c1adc5b3f85e4c25/out

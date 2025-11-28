@@ -1,0 +1,13 @@
+{"ts": "2025-11-27T00:00:00Z", "dc": "dc_assignment", "intention": "I:PutValue", "pulses": {"value": 42, "location": "x"}}
+{"ts": "2025-11-27T00:00:00Z", "dc": "dc_assignment", "intention": "I:ValuePlaced", "pulses": {"location": "x", "value": 42}}
+{"ts": "2025-11-27T00:00:01Z", "dc": "dc_assignment", "intention": "I:MoveValue", "pulses": {"from": "v", "to": "y", "value": [1, 2, 3]}}
+{"ts": "2025-11-27T00:00:01Z", "dc": "dc_assignment", "intention": "I:ValuePlaced", "pulses": {"location": "y", "value": [1, 2, 3]}}
+{"ts": "2025-11-27T00:00:02Z", "dc": "dc_assignment", "intention": "I:BorrowValue", "pulses": {"location": "a", "borrow_kind": "shared"}}
+{"ts": "2025-11-27T00:00:02Z", "dc": "dc_assignment", "intention": "I:BorrowIssued", "pulses": {"loan_token": "loan_r", "location": "a"}}
+{"ts": "2025-11-27T00:00:03Z", "dc": "dc_assignment", "intention": "I:BorrowMutValue", "pulses": {"location": "m", "borrow_kind": "exclusive"}}
+{"ts": "2025-11-27T00:00:03Z", "dc": "dc_assignment", "intention": "I:BorrowIssued", "pulses": {"loan_token": "loan_rm", "location": "m", "mut": true}}
+{"ts": "2025-11-27T00:00:04Z", "dc": "dc_assignment", "intention": "I:RefcountChanged", "pulses": {"src": "rc1", "target": "rc2"}}
+{"ts": "2025-11-27T00:00:05Z", "dc": "dc_assignment", "intention": "I:DropScheduled", "pulses": {"from": "z"}}
+{"ts": "2025-11-27T00:00:05Z", "dc": "dc_assignment", "intention": "I:ValueDropped", "pulses": {"from": "z"}}
+{"ts": "2025-11-27T00:00:06Z", "dc": "dc_assignment", "intention": "I:PutValue", "pulses": {"location": "direct_loc", "value": {"hello": "world"}}}
+{"ts": "2025-11-27T00:00:06Z", "dc": "dc_assignment", "intention": "I:ValuePlaced", "pulses": {"location": "direct_loc"}}

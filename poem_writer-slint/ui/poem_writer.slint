@@ -1,0 +1,233 @@
+// Poem Writer UI - Clean Version
+import { VerticalBox, HorizontalBox, TextEdit } from "std-widgets.slint";
+
+global Colors {
+    in-out property <color> background: #1a1a2e;
+    in-out property <color> surface: #16213e;
+    in-out property <color> surface-light: #0f3460;
+    in-out property <color> primary: #e94560;
+    in-out property <color> secondary: #533483;
+    in-out property <color> text-primary: #eaeaea;
+    in-out property <color> text-secondary: #a0a0a0;
+    in-out property <color> divider: #2d2d44;
+    in-out property <color> accent: #f39c12;
+    in-out property <color> danger: #e74c3c;
+}
+
+component PageIndicator inherits Rectangle {
+    in property <int> page-number: 1;
+    in property <int> total-pages: 1;
+    background: Colors.surface-light;
+    border-radius: 20px;
+    height: 40px;
+    
+    HorizontalBox {
+        padding: 8px;
+        spacing: 8px;
+        Text { text: "Page"; color: Colors.text-secondary; font-size: 14px; vertical-alignment: center; }
+        Text { text: page-number; color: Colors.primary; font-size: 18px; font-weight: 700; vertical-alignment: center; }
+        Text { text: "of"; color: Colors.text-secondary; font-size: 14px; vertical-alignment: center; }
+        Text { text: total-pages; color: Colors.text-primary; font-size: 16px; font-weight: 500; vertical-alignment: center; }
+    }
+}
+
+component NavButton inherits Rectangle {
+    in property <string> label;
+    in property <bool> enabled: true;
+    in property <color> btn-color: Colors.primary;
+    callback clicked;
+    
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: enabled ? Colors.surface-light : Colors.surface;
+    
+    states [
+        hover when touch-area.has-hover && enabled: { background: btn-color; }
+        pressed when touch-area.pressed && enabled: { background: Colors.secondary; }
+    ]
+    
+    touch-area := TouchArea { clicked => { if (enabled) { root.clicked(); } } }
+    
+    Text {
+        text: label;
+        color: enabled ? Colors.text-primary : Colors.text-secondary;
+        font-size: 20px;
+        font-weight: 700;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+component ActionButton inherits Rectangle {
+    in property <string> label;
+    in property <color> btn-color: Colors.primary;
+    callback clicked;
+    
+    height: 44px;
+    border-radius: 8px;
+    background: btn-color;
+    
+    states [
+        hover when touch-area.has-hover: { background: Colors.accent; }
+        pressed when touch-area.pressed: { background: Colors.secondary; }
+    ]
+    
+    touch-area := TouchArea { clicked => { root.clicked(); } }
+    
+    Text {
+        text: label;
+        color: Colors.text-primary;
+        font-size: 14px;
+        font-weight: 600;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+component SectionHeader inherits Rectangle {
+    in property <string> title;
+    in property <string> subtitle: "";
+    height: 60px;
+    background: Colors.surface;
+    
+    VerticalBox {
+        padding: 12px;
+        spacing: 4px;
+        Text { text: title; color: Colors.text-primary; font-size: 16px; font-weight: 600; }
+        if (subtitle != ""): Text { text: subtitle; color: Colors.text-secondary; font-size: 12px; }
+    }
+}
+
+component FocusableTextEdit {
+    in property <string> text-content;
+    in property <length> font-size: 16px;
+    callback text-edited(string);
+    
+    FocusScope {
+        width: 100%;
+        height: 100%;
+        
+        Rectangle {
+            background: Colors.background;
+            border-width: 2px;
+            border-color: focus-scope.has-focus ? Colors.primary : transparent;
+            border-radius: 4px;
+        }
+        
+        focus-scope := FocusScope {
+            key-pressed(event) => { edit.focus(); return accept; }
+            
+            edit := TextEdit {
+                width: parent.width - 20px;
+                height: parent.height - 20px;
+                x: 10px;
+                y: 10px;
+                text: text-content;
+                font-size: font-size;
+                wrap: word-wrap;
+                edited(new-text) => { text-edited(new-text); }
+            }
+        }
+        
+        TouchArea { clicked => { edit.focus(); } }
+    }
+}
+
+export component PoemWriter inherits Window {
+    in-out property <string> poem-text: "";
+    in-out property <string> notes-text: "";
+    in-out property <int> page-number: 1;
+    in-out property <int> total-pages: 1;
+    
+    callback poem-text-changed(string);
+    callback notes-text-changed(string);
+    callback add-page();
+    callback delete-page();
+    callback next-page();
+    callback prev-page();
+    callback save();
+    callback export();
+    
+    title: "Poem Writer - Intention Space";
+    background: Colors.background;
+    preferred-width: 1200px;
+    preferred-height: 800px;
+    
+    VerticalBox {
+        Rectangle {
+            height: 70px;
+            background: Colors.surface;
+            
+            HorizontalBox {
+                padding: 16px;
+                spacing: 16px;
+                
+                VerticalBox {
+                    spacing: 4px;
+                    Text { text: "✍️ Poem Writer"; color: Colors.primary; font-size: 20px; font-weight: 700; }
+                    Text { text: "Intention Space Computing"; color: Colors.text-secondary; font-size: 12px; }
+                }
+                
+                Rectangle { }
+                
+                HorizontalBox {
+                    spacing: 12px;
+                    NavButton { label: "←"; enabled: page-number > 1; clicked => { prev-page(); } }
+                    PageIndicator { page-number: page-number; total-pages: total-pages; }
+                    NavButton { label: "→"; enabled: page-number < total-pages; clicked => { next-page(); } }
+                    NavButton { label: "+"; enabled: true; clicked => { add-page(); } }
+                    NavButton { label: "🗑️"; enabled: total-pages > 1; btn-color: Colors.danger; clicked => { delete-page(); } }
+                }
+            }
+        }
+        
+        HorizontalBox {
+            spacing: 0px;
+            
+            VerticalBox {
+                spacing: 0px;
+                SectionHeader { title: "Your Poem"; subtitle: "Write your verses here"; }
+                
+                FocusableTextEdit {
+                    text-content: poem-text;
+                    font-size: 18px;
+                    text-edited(text) => {
+                        poem-text = text;
+                        poem-text-changed(text);
+                    }
+                }
+            }
+            
+            Rectangle { width: 2px; background: Colors.divider; }
+            
+            VerticalBox {
+                spacing: 0px;
+                SectionHeader { title: "Notes & Emotions"; subtitle: "Capture your thoughts"; }
+                
+                FocusableTextEdit {
+                    text-content: notes-text;
+                    font-size: 16px;
+                    text-edited(text) => {
+                        notes-text = text;
+                        notes-text-changed(text);
+                    }
+                }
+            }
+        }
+        
+        Rectangle {
+            height: 60px;
+            background: Colors.surface;
+            
+            HorizontalBox {
+                padding: 12px;
+                spacing: 12px;
+                ActionButton { label: "💾 Save"; btn-color: Colors.primary; clicked => { save(); } }
+                ActionButton { label: "📤 Export"; btn-color: Colors.secondary; clicked => { export(); } }
+                Rectangle { }
+                Text { text: "I-O-I-DN-I-GL-I Flow Active"; color: Colors.text-secondary; font-size: 10px; }
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+[package]
+name = "dn_impl"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dn_api = { path = "../dn_api" }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }

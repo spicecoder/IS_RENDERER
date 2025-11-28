@@ -1,0 +1,411 @@
+// ============================================================================
+// POEM WRITER UI - Slint Definition
+// Split-screen: Poem composition | Notes/Emotions
+// Grid Layout: ONE CELL = ONE PULSE principle
+// ============================================================================
+
+import { VerticalBox, HorizontalBox, ScrollView, LineEdit, TextEdit, Button } from "std-widgets.slint";
+
+// Color palette
+global Colors := {
+    property <color> background: #1a1a2e;
+    property <color> surface: #16213e;
+    property <color> surface-light: #0f3460;
+    property <color> primary: #e94560;
+    property <color> secondary: #533483;
+    property <color> text-primary: #eaeaea;
+    property <color> text-secondary: #a0a0a0;
+    property <color> divider: #2d2d44;
+    property <color> accent: #f39c12;
+}
+
+// Page indicator component
+component PageIndicator inherits Rectangle {
+    in property <int> page-number: 1;
+    in property <int> total-pages: 1;
+    
+    background: Colors.surface-light;
+    border-radius: 20px;
+    height: 40px;
+    
+    HorizontalBox {
+        padding: 8px;
+        spacing: 8px;
+        
+        Text {
+            text: "Page";
+            color: Colors.text-secondary;
+            font-size: 14px;
+            vertical-alignment: center;
+        }
+        
+        Text {
+            text: page-number;
+            color: Colors.primary;
+            font-size: 18px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+        
+        Text {
+            text: "/";
+            color: Colors.text-secondary;
+            font-size: 14px;
+            vertical-alignment: center;
+        }
+        
+        Text {
+            text: total-pages;
+            color: Colors.text-secondary;
+            font-size: 14px;
+            vertical-alignment: center;
+        }
+    }
+}
+
+// Navigation button component
+component NavButton inherits Rectangle {
+    in property <string> icon: "";
+    in property <bool> enabled: true;
+    callback clicked;
+    
+    background: enabled ? Colors.surface-light : Colors.surface;
+    border-radius: 20px;
+    width: 40px;
+    height: 40px;
+    
+    states [
+        pressed when touch.pressed : {
+            background: Colors.primary;
+        }
+    ]
+    
+    touch := TouchArea {
+        clicked => {
+            if (enabled) {
+                root.clicked();
+            }
+        }
+    }
+    
+    Text {
+        text: icon;
+        color: enabled ? Colors.text-primary : Colors.text-secondary;
+        font-size: 20px;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+// Action button component
+component ActionButton inherits Rectangle {
+    in property <string> label: "";
+    in property <color> bg-color: Colors.primary;
+    callback clicked;
+    
+    background: bg-color;
+    border-radius: 8px;
+    height: 48px;
+    
+    states [
+        pressed when touch.pressed : {
+            background: Colors.accent;
+        }
+    ]
+    
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+    
+    Text {
+        text: label;
+        color: Colors.text-primary;
+        font-size: 16px;
+        font-weight: 600;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+// Section header component
+component SectionHeader inherits Rectangle {
+    in property <string> title: "";
+    in property <string> subtitle: "";
+    
+    background: transparent;
+    height: 70px;
+    
+    VerticalBox {
+        padding: 12px;
+        spacing: 4px;
+        
+        Text {
+            text: title;
+            color: Colors.text-primary;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        Text {
+            text: subtitle;
+            color: Colors.text-secondary;
+            font-size: 12px;
+            font-style: italic;
+        }
+    }
+}
+
+// Text editor component
+component TextEditor inherits Rectangle {
+    in-out property <string> text: "";
+    in property <string> placeholder: "";
+    in property <bool> is-poem: false;
+    callback text-changed(string);
+    
+    background: Colors.surface;
+    border-radius: 12px;
+    
+    VerticalBox {
+        padding: 16px;
+        
+        if (text == "") : Text {
+            text: placeholder;
+            color: Colors.text-secondary;
+            font-size: is-poem ? 16px : 14px;
+            font-style: italic;
+            opacity: 0.5;
+        }
+        
+        TextEdit {
+            text <=> root.text;
+            color: Colors.text-primary;
+            font-size: is-poem ? 16px : 14px;
+            font-family: is-poem ? "Georgia, serif" : "system";
+            wrap: word-wrap;
+            
+            edited => {
+                root.text-changed(self.text);
+            }
+        }
+    }
+}
+
+// Main application window
+export component PoemWriterUI inherits Window {
+    // State properties
+    in-out property <string> poem-text: "";
+    in-out property <string> notes-text: "";
+    in-out property <int> page-number: 1;
+    in-out property <int> total-pages: 1;
+    
+    // Callbacks
+    callback poem-text-changed(string);
+    callback notes-text-changed(string);
+    callback add-page();
+    callback next-page();
+    callback prev-page();
+    
+    // Window properties
+    title: "Poem Writer - Intention Space";
+    background: Colors.background;
+    preferred-width: 800px;
+    preferred-height: 600px;
+    
+    // Main layout
+    VerticalBox {
+        padding: 0px;
+        spacing: 0px;
+        
+        // Header bar
+        Rectangle {
+            background: Colors.surface;
+            height: 70px;
+            
+            HorizontalBox {
+                padding: 16px;
+                spacing: 16px;
+                
+                // App title
+                VerticalBox {
+                    spacing: 4px;
+                    
+                    Text {
+                        text: "✍️ Poem Writer";
+                        color: Colors.text-primary;
+                        font-size: 20px;
+                        font-weight: 700;
+                    }
+                    
+                    Text {
+                        text: "Intention Space Physics";
+                        color: Colors.text-secondary;
+                        font-size: 11px;
+                        font-style: italic;
+                    }
+                }
+                
+                Rectangle {
+                    horizontal-stretch: 1;
+                }
+                
+                // Navigation controls
+                HorizontalBox {
+                    spacing: 12px;
+                    alignment: center;
+                    
+                    NavButton {
+                        icon: "◀";
+                        enabled: page-number > 1;
+                        clicked => { prev-page(); }
+                    }
+                    
+                    PageIndicator {
+                        page-number: page-number;
+                        total-pages: total-pages;
+                    }
+                    
+                    NavButton {
+                        icon: "▶";
+                        enabled: page-number < total-pages;
+                        clicked => { next-page(); }
+                    }
+                    
+                    NavButton {
+                        icon: "+";
+                        enabled: true;
+                        clicked => { add-page(); }
+                    }
+                }
+            }
+        }
+        
+        // Divider
+        Rectangle {
+            background: Colors.divider;
+            height: 1px;
+        }
+        
+        // Main content area - Split screen
+        HorizontalBox {
+            padding: 0px;
+            spacing: 0px;
+            
+            // LEFT SIDE: Poem composition
+            VerticalBox {
+                horizontal-stretch: 1;
+                padding: 0px;
+                spacing: 0px;
+                
+                // Poem header
+                SectionHeader {
+                    title: "📝 Your Poem";
+                    subtitle: "Compose your verses here";
+                }
+                
+                // Poem editor
+                Rectangle {
+                    background: Colors.background;
+                    
+                    ScrollView {
+                        viewport-width: 100%;
+                        viewport-height: 100%;
+                        
+                        VerticalBox {
+                            padding: 16px;
+                            
+                            TextEditor {
+                                text <=> poem-text;
+                                placeholder: "Begin your poem...\n\nLet words flow like rivers,\nThoughts bloom like spring flowers,\nEmotions dance on paper.";
+                                is-poem: true;
+                                text-changed(new-text) => {
+                                    poem-text-changed(new-text);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // CENTER: Divider
+            Rectangle {
+                background: Colors.divider;
+                width: 2px;
+            }
+            
+            // RIGHT SIDE: Notes and emotions
+            VerticalBox {
+                horizontal-stretch: 1;
+                padding: 0px;
+                spacing: 0px;
+                
+                // Notes header
+                SectionHeader {
+                    title: "💭 Notes & Emotions";
+                    subtitle: "Capture feelings, ideas, themes";
+                }
+                
+                // Notes editor
+                Rectangle {
+                    background: Colors.background;
+                    
+                    ScrollView {
+                        viewport-width: 100%;
+                        viewport-height: 100%;
+                        
+                        VerticalBox {
+                            padding: 16px;
+                            
+                            TextEditor {
+                                text <=> notes-text;
+                                placeholder: "Jot down:\n• Emotional content\n• Key themes\n• Inspiration sources\n• Word choices\n• Imagery ideas\n• Rhythm notes";
+                                is-poem: false;
+                                text-changed(new-text) => {
+                                    notes-text-changed(new-text);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Footer bar
+        Rectangle {
+            background: Colors.surface;
+            height: 60px;
+            
+            HorizontalBox {
+                padding: 12px;
+                spacing: 12px;
+                
+                // Action buttons
+                ActionButton {
+                    horizontal-stretch: 1;
+                    label: "💾 Save";
+                    bg-color: Colors.secondary;
+                    clicked => {
+                        // Save functionality (handled by backend)
+                    }
+                }
+                
+                ActionButton {
+                    horizontal-stretch: 1;
+                    label: "📤 Export";
+                    bg-color: Colors.secondary;
+                    clicked => {
+                        // Export functionality
+                    }
+                }
+                
+                ActionButton {
+                    horizontal-stretch: 1;
+                    label: "🎨 Theme";
+                    bg-color: Colors.surface-light;
+                    clicked => {
+                        // Theme change
+                    }
+                }
+            }
+        }
+    }
+}
